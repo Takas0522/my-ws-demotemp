@@ -1,0 +1,17 @@
+{
+  "database-client.defaultConnection": "postgres@localhost",
+  "database-client.connections": [
+    {
+      "host": "localhost",
+      "port": 5432,
+      "user": "postgres",
+      "password": "postgres",
+      "database": "postgres",
+      "connectionName": "postgres@localhost",
+      "dbType": "PostgreSQL",
+      "showHidden": false,
+      "encrypt": false,
+      "timezone": "+00:00"
+    }
+  ]
+}
