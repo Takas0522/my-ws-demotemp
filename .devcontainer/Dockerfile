@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/devcontainers/java:1-11-bullseye
 
 ARG INSTALL_MAVEN="true"
-ARG MAVEN_VERSION=""
+ARG MAVEN_VERSION="3.9.9"
 
 ARG INSTALL_GRADLE="false"
 ARG GRADLE_VERSION=""
@@ -14,5 +14,10 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends postgresql-client \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-# [Optional] Uncomment this line to install global node packages.
-# RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g <your-package-here>" 2>&1
+# Install Payara Micro (for Jakarta EE applications)
+ARG PAYARA_VERSION=5.2022.5
+RUN mkdir -p /opt && \
+    wget -q https://repo1.maven.org/maven2/fish/payara/extras/payara-micro/${PAYARA_VERSION}/payara-micro-${PAYARA_VERSION}.jar \
+    -O /opt/payara-micro.jar && \
+    chmod 644 /opt/payara-micro.jar
+

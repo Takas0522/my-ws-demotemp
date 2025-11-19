@@ -38,7 +38,11 @@ services:
     restart: unless-stopped
     volumes:
       - postgres-data:/var/lib/postgresql
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/01-init-db.sql
+      - ../src/user-service/database/schema.sql:/docker-entrypoint-initdb.d/02-user-service-schema.sql
+      - ../src/user-service/database/seed.sql:/docker-entrypoint-initdb.d/03-user-service-seed.sql
+      - ../src/auth-service/database/schema.sql:/docker-entrypoint-initdb.d/04-auth-service-schema.sql
+      - ../src/auth-service/database/seed.sql:/docker-entrypoint-initdb.d/05-auth-service-seed.sql
     environment:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
       POSTGRES_PASSWORD: postgres

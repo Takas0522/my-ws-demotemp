@@ -1,0 +1,192 @@
+# クイックスタートガイド
+
+## 前提条件の確認
+
+現在のDevContainerで発生している問題：
+- ❌ Maven 4.x がインストールされているが Java 11 では動作しない
+- ❌ Payara Micro がインストールされていない
+
+## 解決方法
+
+### 1. DevContainer を再ビルド
+
+VS Code のコマンドパレット（Ctrl+Shift+P / Cmd+Shift+P）を開き、以下を実行：
+
+```
+Dev Containers: Rebuild Container
+```
+
+これにより以下がインストールされます：
+- ✅ Maven 3.9.9（Java 11 対応）
+- ✅ Payara Micro 5.2022.5
+
+### 2. 再ビルド後の確認
+
+```bash
+# Maven バージョン確認
+mvn --version
+# 期待: Apache Maven 3.9.9
+
+# Java バージョン確認
+java -version
+# 期待: openjdk version "11.0.28"
+
+# Payara Micro 確認
+ls -lh /opt/payara-micro.jar
+# 期待: ファイルが存在する
+```
+
+### 3. サービスのビルド
+
+各サービスを順番にビルド：
+
+```bash
+# ユーザーサービス
+cd /workspaces/my-ws-demo/src/user-service
+mvn clean package
+
+# 認証サービス
+cd /workspaces/my-ws-demo/src/auth-service
+mvn clean package
+
+# BFF
+cd /workspaces/my-ws-demo/src/bff
+mvn clean package
+```
+
+### 4. サービスの起動
+
+**4つの別々のターミナル**を開いて、それぞれで以下を実行：
+
+#### ターミナル 1: ユーザーサービス
+```bash
+cd /workspaces/my-ws-demo/src/user-service
+java -jar /opt/payara-micro.jar --deploy target/user-service.war --port 8080
+```
+
+起動完了のメッセージを待つ（約30秒）
+
+#### ターミナル 2: 認証サービス
+```bash
+cd /workspaces/my-ws-demo/src/auth-service
+java -jar /opt/payara-micro.jar --deploy target/auth-service.war --port 8081
+```
+
+起動完了のメッセージを待つ（約30秒）
+
+#### ターミナル 3: BFF
+```bash
+cd /workspaces/my-ws-demo/src/bff
+java -jar /opt/payara-micro.jar --deploy target/bff.war --port 8082
+```
+
+起動完了のメッセージを待つ（約30秒）
+
+#### ターミナル 4: フロントエンド
+```bash
+cd /workspaces/my-ws-demo/frontend
+npm install
+npm run dev
+```
+
+### 5. アクセス
+
+ブラウザで http://localhost:3000 を開く
+
+### 6. ログイン
+
+以下のテストユーザーでログイン：
+
+| ユーザーID | 氏名 | パスワード |
+|----------|------|-----------|
+| 1 | 田中太郎 | password123 |
+| 2 | 鈴木花子 | password123 |
+| 3 | 山田次郎 | password123 |
+
+## トラブルシューティング
+
+### エラー: "Apache Maven 4.x requires Java 17"
+
+→ DevContainer を再ビルドしてください
+
+### エラー: "Unable to access jarfile /opt/payara-micro.jar"
+
+→ DevContainer を再ビルドしてください
+
+### ポート競合エラー
+
+既に起動中のサービスがある場合：
+```bash
+# プロセス確認
+lsof -i :8080
+lsof -i :8081
+lsof -i :8082
+
+# プロセス終了
+kill -9 <PID>
+```
+
+### データベース接続エラー
+
+PostgreSQL が起動していることを確認：
+```bash
+pg_isready -U postgres
+```
+
+### フロントエンドが起動しない
+
+node_modules を削除して再インストール：
+```bash
+cd /workspaces/my-ws-demo/frontend
+rm -rf node_modules package-lock.json
+npm install
+npm run dev
+```
+
+## 動作確認
+
+### API の動作確認
+
+```bash
+# ユーザーサービス
+curl http://localhost:8080/api/users
+
+# 認証サービス（ログイン）
+curl -X POST http://localhost:8081/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"userId": 1, "password": "password123"}'
+
+# BFF
+curl http://localhost:8082/api/users \
+  -H "Authorization: Bearer <token>"
+```
+
+### データベースの確認
+
+```bash
+# PostgreSQL に接続
+psql -U postgres -h localhost
+
+# データベース一覧
+\l
+
+# user_service_db に接続
+\c user_service_db
+
+# テーブル確認
+\dt
+
+# ユーザー確認
+SELECT * FROM users;
+
+# 終了
+\q
+```
+
+## 次のステップ
+
+- [README.md](../README.md) - プロジェクト全体の概要
+- [アーキテクチャドキュメント](./architecture.md) - 詳細な設計
+- [User Service README](../src/user-service/README.md) - ユーザーサービスAPI
+- [Auth Service README](../src/auth-service/README.md) - 認証サービスAPI
+- [BFF README](../src/bff/README.md) - BFF API
