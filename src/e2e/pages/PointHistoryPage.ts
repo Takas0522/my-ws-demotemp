@@ -14,6 +14,7 @@ export class PointHistoryPage extends BasePage {
   private readonly pageInfo: Locator;
   private readonly currentPage: Locator;
   private readonly backButton: Locator;
+  private readonly accountButton: Locator;
   private readonly logoutButton: Locator;
 
   constructor(page: Page) {
@@ -23,12 +24,13 @@ export class PointHistoryPage extends BasePage {
     this.pageTitle = page.locator('h1');
     // ポイント残高カード内の大きな数値を表示している要素（text-5xlクラスの要素）
     this.currentBalance = page.locator('[data-testid="current-balance"]').or(page.locator('.text-5xl.font-bold.text-blue-600'));
-    this.historyList = page.locator('[data-testid="history-list"]').or(page.locator('ul, div[class*="history"]'));
-    this.historyItem = page.locator('[data-testid="history-item"]').or(page.locator('li, div[class*="item"]'));
+    this.historyList = page.locator('[data-testid="history-list"]').or(page.locator('ul').first());
+    this.historyItem = page.locator('[data-testid="history-item"]').or(page.locator('li'));
     // ページ情報: ページネーション内の "X / Y" の形式で現在のページと総ページ数を表示しているspan要素
-    this.pageInfo = page.locator('[data-testid="page-info"]').or(page.locator('span.px-4.py-2.text-gray-700'));
-    this.currentPage = page.locator('[data-testid="current-page"]').or(page.locator('text=/^\\d+$/'));
-    this.backButton = page.locator('button:has-text("戻る")').or(page.locator('a:has-text("戻る")'));
+    this.pageInfo = page.locator('[data-testid="page-info"]').or(page.locator('span:has-text("/")'));
+    this.currentPage = page.locator('[data-testid="current-page"]').or(page.locator('span:has-text("/")'));
+    this.backButton = page.locator('a:has-text("残高へ戻る")').or(page.locator('a:has-text("戻る")'));
+    this.accountButton = page.locator('a[href="/account"]').or(page.getByRole('link', { name: /アカウント/ }));
     this.logoutButton = page.locator('button:has-text("ログアウト")');
   }
 
@@ -176,6 +178,17 @@ export class PointHistoryPage extends BasePage {
    */
   async 戻るボタンクリック(): Promise<void> {
     await this.クリック(this.backButton);
+    // ページ遷移を待つ - /points へのナビゲーションを待機
+    await this.page.waitForURL(/\/points\/?(?:\?.*)?$/, { timeout: 5000 });
+    // 追加で少し待機してSPAの描画を確実にする
+    await this.page.waitForTimeout(500);
+  }
+
+  /**
+   * アカウントボタンをクリックする
+   */
+  async アカウントボタンクリック(): Promise<void> {
+    await this.クリック(this.accountButton);
     // SPAの描画を待つ
     await this.page.waitForTimeout(500);
   }

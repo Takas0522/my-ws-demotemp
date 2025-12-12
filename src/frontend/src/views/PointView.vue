@@ -7,9 +7,9 @@
         <div class="flex space-x-4">
           <router-link
             to="/account"
-            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-200"
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200"
           >
-            アカウント
+            戻る
           </router-link>
           <button
             @click="handleLogout"
@@ -42,10 +42,15 @@
           </h2>
           
           <div v-if="pointData" class="text-center">
-            <div class="text-5xl font-bold text-blue-600 mb-2">
+            <div class="text-5xl font-bold text-blue-600 mb-2"
+                 data-testid="current-balance">
               {{ pointData.balance?.toLocaleString() || 0 }}
             </div>
-            <div class="text-gray-600">ポイント</div>
+            <div class="text-gray-600 mb-2">ポイント</div>
+            <div class="text-sm text-gray-500"
+                 data-testid="last-updated">
+              最終更新: {{ formatLastUpdated(pointData.lastUpdated || pointData.updatedAt || new Date()) }}
+            </div>
           </div>
         </div>
 
@@ -121,6 +126,23 @@ export default {
       }
     }
 
+    const formatLastUpdated = (timestamp) => {
+      if (!timestamp) return ''
+      
+      try {
+        const date = new Date(timestamp)
+        return date.toLocaleDateString('ja-JP', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      } catch (error) {
+        return ''
+      }
+    }
+
     onMounted(() => {
       loadPointData()
     })
@@ -129,7 +151,8 @@ export default {
       pointData,
       loading,
       errorMessage,
-      handleLogout
+      handleLogout,
+      formatLastUpdated
     }
   }
 }

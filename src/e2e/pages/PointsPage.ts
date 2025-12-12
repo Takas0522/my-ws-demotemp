@@ -20,12 +20,13 @@ export class PointsPage extends BasePage {
     
     // 要素の初期化
     this.pageTitle = page.locator('h1');
-    this.currentBalance = page.locator('[data-testid="current-balance"]').or(page.locator('text=/現在のポイント|ポイント残高/').locator('..').locator('text=/\\d+/'));
+    this.currentBalance = page.locator('[data-testid="current-balance"]');
     this.lastUpdated = page.locator('[data-testid="last-updated"]').or(page.locator('text=/最終更新/'));
     // '/point-history' または '/points/history' の両方を許容
     this.pointHistoryButton = page.locator('a[href*="history"]').or(page.getByRole('link', { name: /ポイント履歴|履歴/ }));
     this.backButton = page.locator('button:has-text("戻る")').or(page.locator('a:has-text("戻る")'));
-    this.accountButton = page.locator('a[href="/account"]').or(page.getByRole('link', { name: /アカウント/ }));
+    // ポイントページでは「戻る」リンクがアカウントページに戻る機能
+    this.accountButton = page.locator('a:has-text("戻る")').first();
     this.logoutButton = page.locator('button:has-text("ログアウト")');
   }
 

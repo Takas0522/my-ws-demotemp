@@ -48,7 +48,8 @@
           </h2>
           
           <div v-if="pointBalance !== null" class="text-center">
-            <div class="text-5xl font-bold text-blue-600 mb-2">
+            <div class="text-5xl font-bold text-blue-600 mb-2"
+                 data-testid="current-balance">
               {{ pointBalance.toLocaleString() }}
             </div>
             <div class="text-gray-600">ポイント</div>

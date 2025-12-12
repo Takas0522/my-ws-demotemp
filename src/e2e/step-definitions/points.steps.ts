@@ -12,9 +12,21 @@ Before(function () {
 
 // ページ要素の表示確認
 Then('現在のポイント残高が表示される', async function () {
-  pointsPage = new PointsPage(this.page);
-  const isVisible = await pointsPage.現在のポイント残高表示確認();
-  expect(isVisible).toBeTruthy();
+  // 現在のURLに応じて適切なページオブジェクトを使用
+  const currentUrl = this.page.url();
+  
+  if (currentUrl.includes('/point') && (currentUrl.includes('/history') || currentUrl.includes('history'))) {
+    // ポイント履歴ページの場合はPointHistoryPageを使用
+    const { PointHistoryPage } = await import('../pages/PointHistoryPage');
+    const pointHistoryPage = new PointHistoryPage(this.page);
+    const isVisible = await pointHistoryPage.現在のポイント残高表示確認();
+    expect(isVisible).toBeTruthy();
+  } else {
+    // ポイントページの場合はPointsPageを使用
+    pointsPage = new PointsPage(this.page);
+    const isVisible = await pointsPage.現在のポイント残高表示確認();
+    expect(isVisible).toBeTruthy();
+  }
 });
 
 Then('最終更新日時が表示される', async function () {
@@ -60,13 +72,45 @@ Then('ポイント履歴ページにリダイレクトされる', async function
 
 // 戻る機能（アカウントページへのリダイレクトは login.steps.ts で定義されているものを使用）
 When('戻るボタンをクリックする', async function () {
-  pointsPage = new PointsPage(this.page);
-  await pointsPage.戻るボタンクリック();
+  // 現在のURLに応じて適切なページオブジェクトを使用
+  const currentUrl = this.page.url();
+  console.log(`=== 戻るボタンクリック実行時のURL: ${currentUrl} ===`);
+  
+  if (currentUrl.includes('/point') && (currentUrl.includes('/history') || currentUrl.includes('history'))) {
+    // ポイント履歴ページの場合はPointHistoryPageを使用
+    console.log('PointHistoryPageの戻るボタンを使用');
+    const { PointHistoryPage } = await import('../pages/PointHistoryPage');
+    const pointHistoryPage = new PointHistoryPage(this.page);
+    await pointHistoryPage.戻るボタンクリック();
+  } else {
+    // ポイントページの場合はPointsPageを使用
+    console.log('PointsPageの戻るボタンを使用');
+    pointsPage = new PointsPage(this.page);
+    await pointsPage.戻るボタンクリック();
+  }
+  
+  // クリック後のURLを確認
+  const newUrl = this.page.url();
+  console.log(`=== 戻るボタンクリック後のURL: ${newUrl} ===`);
 });
 
 When('アカウントボタンをクリックする', async function () {
-  pointsPage = new PointsPage(this.page);
-  await pointsPage.アカウントボタンクリック();
+  // 現在のURLに応じて適切なページオブジェクトを使用
+  const currentUrl = this.page.url();
+  console.log(`=== アカウントボタンクリック実行時のURL: ${currentUrl} ===`);
+  
+  if (currentUrl.includes('/point') && (currentUrl.includes('/history') || currentUrl.includes('history'))) {
+    // ポイント履歴ページの場合はPointHistoryPageのアカウントボタンを使用
+    console.log('PointHistoryPageのアカウントボタンを使用');
+    const { PointHistoryPage } = await import('../pages/PointHistoryPage');
+    const pointHistoryPage = new PointHistoryPage(this.page);
+    await pointHistoryPage.アカウントボタンクリック();
+  } else {
+    // ポイントページの場合はPointsPageを使用（ただし、修正されたものを使用）
+    console.log('PointsPageのアカウントボタンを使用');
+    pointsPage = new PointsPage(this.page);
+    await pointsPage.アカウントボタンクリック();
+  }
 });
 
 // localStorageの操作
