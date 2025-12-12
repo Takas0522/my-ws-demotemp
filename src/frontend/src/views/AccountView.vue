@@ -44,11 +44,11 @@
           <div v-if="accountData?.user" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p class="text-sm text-gray-600">ユーザーID</p>
-              <p class="text-lg font-medium text-gray-900">{{ accountData.user.id }}</p>
+              <p class="text-lg font-medium text-gray-900" data-testid="user-id">{{ accountData.user.id }}</p>
             </div>
             <div>
               <p class="text-sm text-gray-600">氏名</p>
-              <p class="text-lg font-medium text-gray-900">{{ accountData.user.fullName }}</p>
+              <p class="text-lg font-medium text-gray-900" data-testid="user-name">{{ accountData.user.fullName }}</p>
             </div>
             <div>
               <p class="text-sm text-gray-600">ユーザー名</p>
@@ -56,7 +56,7 @@
             </div>
             <div>
               <p class="text-sm text-gray-600">メールアドレス</p>
-              <p class="text-lg font-medium text-gray-900">{{ accountData.user.email }}</p>
+              <p class="text-lg font-medium text-gray-900" data-testid="user-email">{{ accountData.user.email }}</p>
             </div>
             <div>
               <p class="text-sm text-gray-600">登録日時</p>
@@ -65,6 +65,29 @@
             <div>
               <p class="text-sm text-gray-600">更新日時</p>
               <p class="text-lg font-medium text-gray-900">{{ formatDate(accountData.user.updatedAt) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ポイント情報カード -->
+        <div class="bg-white shadow rounded-lg p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            ポイント情報
+          </h2>
+          
+          <div v-if="accountData?.points" class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-600">現在のポイント残高</p>
+                <p class="text-3xl font-bold text-blue-600" data-testid="point-balance">{{ accountData.points.balance }} ポイント</p>
+              </div>
+            </div>
+            <div v-if="accountData.points.lastUpdated">
+              <p class="text-sm text-gray-600">最終更新日時</p>
+              <p class="text-lg font-medium text-gray-900">{{ formatDate(accountData.points.lastUpdated) }}</p>
             </div>
           </div>
         </div>

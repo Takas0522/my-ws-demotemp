@@ -140,13 +140,62 @@ public class BffResource {
 
             // ユーザーアカウント情報取得
             Response userResponse = userServiceClient.getUserAccount(userId);
-            String body = userResponse.readEntity(String.class);
+            if (userResponse.getStatus() != 200) {
+                return Response.status(userResponse.getStatus())
+                        .entity(userResponse.readEntity(String.class))
+                        .build();
+            }
+            String userBody = userResponse.readEntity(String.class);
             
-            return Response.status(userResponse.getStatus())
-                    .entity(body)
-                    .build();
+            // ポイント情報取得
+            Response pointResponse = null;
+            String pointsJson = null;
+            try {
+                pointResponse = pointServiceClient.getPoints(token);
+                if (pointResponse.getStatus() == 200) {
+                    pointsJson = pointResponse.readEntity(String.class);
+                }
+            } catch (Exception e) {
+                // ポイントサービスにアクセスできない場合は無視（ポイント情報なしで返す）
+                System.err.println("Failed to fetch points: " + e.getMessage());
+            }
+            
+            // ユーザー情報とポイント情報をマージ
+            String mergedJson = mergeAccountAndPoints(userBody, pointsJson);
+            
+            return Response.ok(mergedJson).build();
         } catch (Exception e) {
             return createErrorResponse("Failed to get account: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * ユーザー情報とポイント情報をマージ
+     */
+    private String mergeAccountAndPoints(String userJson, String pointsJson) {
+        // 簡易的な実装（実際はJSONライブラリで適切にマージすべき）
+        if (pointsJson == null || pointsJson.trim().isEmpty()) {
+            // ポイント情報がない場合はユーザー情報のみ返す
+            return userJson;
+        }
+        
+        try {
+            // userJsonの最後の "}" を削除
+            String baseJson = userJson.trim();
+            if (baseJson.endsWith("}")) {
+                baseJson = baseJson.substring(0, baseJson.length() - 1).trim();
+            }
+            
+            // カンマがない場合は追加
+            if (!baseJson.endsWith(",")) {
+                baseJson = baseJson + ",";
+            }
+            
+            // ポイント情報を "points" キーでラップして追加
+            return baseJson + "\"points\":" + pointsJson + "}";
+        } catch (Exception e) {
+            System.err.println("Failed to merge JSON: " + e.getMessage());
+            return userJson;
         }
     }
 

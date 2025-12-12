@@ -65,22 +65,12 @@ class AuthRepositoryIT {
         userDs.setPassword(userPostgres.getPassword());
         userDataSource = userDs;
 
-        // 環境変数を設定（AuthRepositoryがUser Serviceに接続するため）
-        // System.getenv()で取得するため、リフレクションを使用して環境変数を設定
-        try {
-            Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
-            Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
-            theEnvironmentField.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            java.util.Map<String, String> env = (java.util.Map<String, String>) theEnvironmentField.get(null);
-            env.put("USER_SERVICE_DB_HOST", userPostgres.getHost());
-            env.put("USER_SERVICE_DB_PORT", String.valueOf(userPostgres.getFirstMappedPort()));
-            env.put("USER_SERVICE_DB_NAME", userPostgres.getDatabaseName());
-            env.put("USER_SERVICE_DB_USER", userPostgres.getUsername());
-            env.put("USER_SERVICE_DB_PASSWORD", userPostgres.getPassword());
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to set environment variables", e);
-        }
+        // システムプロパティを設定（AuthRepositoryがUser Serviceに接続するため）
+        System.setProperty("USER_SERVICE_DB_HOST", userPostgres.getHost());
+        System.setProperty("USER_SERVICE_DB_PORT", String.valueOf(userPostgres.getFirstMappedPort()));
+        System.setProperty("USER_SERVICE_DB_NAME", userPostgres.getDatabaseName());
+        System.setProperty("USER_SERVICE_DB_USER", userPostgres.getUsername());
+        System.setProperty("USER_SERVICE_DB_PASSWORD", userPostgres.getPassword());
 
         // AuthRepositoryのインスタンス化とDataSourceの注入
         authRepository = new AuthRepository();
@@ -178,39 +168,53 @@ class AuthRepositoryIT {
 
     @Test
     @Order(1)
-    @DisplayName("ユーザー名からユーザーIDを取得できること - スキップ（環境依存）")
-    @Disabled("AuthRepositoryがSystem.getenv()を使用しているため、テストコンテナの環境変数を読み込めない")
+    @DisplayName("ユーザー名からユーザーIDを取得できること")
     void testGetUserIdByUsername() throws SQLException {
+        // 実行
         Optional<UUID> userIdOpt = authRepository.getUserIdByUsername("tanaka_taro");
+
+        // 検証
         assertTrue(userIdOpt.isPresent(), "ユーザーIDが取得できること");
+        assertEquals(UUID.fromString("05c66ceb-6ddc-4ada-b736-08702615ff48"), userIdOpt.get());
     }
 
     @Test
     @Order(2)
-    @DisplayName("存在しないユーザー名で検索した場合 - スキップ（環境依存）")
-    @Disabled("AuthRepositoryがSystem.getenv()を使用しているため、テストコンテナの環境変数を読み込めない")
+    @DisplayName("存在しないユーザー名で検索した場合はEmptyが返ること")
     void testGetUserIdByUsernameNotFound() throws SQLException {
+        // 実行
         Optional<UUID> userIdOpt = authRepository.getUserIdByUsername("nonexistent_user");
+
+        // 検証
         assertFalse(userIdOpt.isPresent(), "ユーザーIDが見つからないこと");
     }
 
     @Test
     @Order(3)
-    @DisplayName("ユーザーIDからユーザー名を取得できること - スキップ（環境依存）")
-    @Disabled("AuthRepositoryがSystem.getenv()を使用しているため、テストコンテナの環境変数を読み込めない")
+    @DisplayName("ユーザーIDからユーザー名を取得できること")
     void testGetUsernameByUserId() throws SQLException {
+        // 準備
         UUID userId = UUID.fromString("4f4777e4-dd9c-4d5b-a928-19a59b1d3ead");
+
+        // 実行
         Optional<String> usernameOpt = authRepository.getUsernameByUserId(userId);
+
+        // 検証
         assertTrue(usernameOpt.isPresent(), "ユーザー名が取得できること");
+        assertEquals("suzuki_hanako", usernameOpt.get());
     }
 
     @Test
     @Order(4)
-    @DisplayName("存在しないユーザーIDで検索した場合 - スキップ（環境依存）")
-    @Disabled("AuthRepositoryがSystem.getenv()を使用しているため、テストコンテナの環境変数を読み込めない")
+    @DisplayName("存在しないユーザーIDで検索した場合はEmptyが返ること")
     void testGetUsernameByUserIdNotFound() throws SQLException {
+        // 準備
         UUID nonExistentId = UUID.randomUUID();
+
+        // 実行
         Optional<String> usernameOpt = authRepository.getUsernameByUserId(nonExistentId);
+
+        // 検証
         assertFalse(usernameOpt.isPresent(), "ユーザー名が見つからないこと");
     }
 

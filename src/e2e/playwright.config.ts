@@ -25,7 +25,10 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: 1, // E2Eテストは1ワーカーで実行（データベースの状態管理のため）
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['html', { outputFolder: '../../temp/e2e/playwright-report' }],
+    ['json', { outputFile: '../../temp/e2e/playwright-report.json' }]
+  ],
   /* Test timeout */
   timeout: 60000, // 60秒
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
