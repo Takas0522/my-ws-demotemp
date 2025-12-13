@@ -1,6 +1,10 @@
 # マイクロサービス風味アプリケーション
 
-Java 11 + Payara + PostgreSQL + Vue 3 で構築されたマイクロサービス風味のアーキテクチャのアプリケーション
+Java 21 + Payara 6 + PostgreSQL + Vue 3 で構築されたマイクロサービス風味のアーキテクチャのアプリケーション
+
+> **🚀 Java 21 Migration Completed!**  
+> このアプリケーションは Java 11 から Java 21 (LTS) に正常に移行されました。  
+> 詳細は [移行結果ドキュメント](docs/modernization-result.md) と [移行サマリー](MIGRATION_SUMMARY.md) を参照してください。
 
 **注意**:
 - 初回実行時は5〜7分かかります（Docker イメージの取得、サービスの起動）
@@ -23,6 +27,28 @@ Java 11 + Payara + PostgreSQL + Vue 3 で構築されたマイクロサービス
 5. [データベース構造](docs/05_データベース構造.md) - ER図とテーブル定義
 6. [画面フロー図](docs/06_画面フロー図.md) - フロントエンドの画面遷移
 7. [初期Seedデータ](docs/07_初期Seedデータ.md) - テストユーザーとSeedデータの詳細
+8. **[Java 21 移行結果](docs/modernization-result.md)** - Java 11 から Java 21 への移行の詳細レポート（2025年12月）
+9. **[移行サマリー](MIGRATION_SUMMARY.md)** - 移行プロジェクトのエグゼクティブサマリー
+
+### 技術スタック
+
+#### バックエンド
+- **Java**: 21 (LTS - 2029年9月までサポート)
+- **Jakarta EE**: 10
+- **Payara Micro**: 6.2024.10
+- **Jersey**: 3.1.5 (JAX-RS implementation)
+- **PostgreSQL**: 16
+
+#### フロントエンド
+- **Vue.js**: 3
+- **Vite**: Build tool
+
+#### テスト
+- **JUnit**: 5.9.3 (ユニット/統合テスト)
+- **Mockito**: 5.3.1 (モッキング)
+- **Playwright**: E2Eテスト
+- **Cucumber**: BDDテスト
+- **TestContainers**: 統合テスト用データベース
 
 ## �🐛 デバッグ実行
 
@@ -43,24 +69,66 @@ Java 11 + Payara + PostgreSQL + Vue 3 で構築されたマイクロサービス
 `.env`ファイルはClone時は存在しませんので、 `.env.sample` をコピーしてリネームしてお使いください。
 開発時のDBはDevContainerで提供されます。シードデータもDevContainer展開時に登録されます。
 
+**Java 21対応**: Payara 6 + Jakarta EE 10 をJava 21で実行するため、以下の`--add-opens`オプションが必要です。
+
 #### user-service
 ```bash
-cd src/user-service && set -a && source <(grep -v '^#' .env) && set +a && mvn clean package && java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar /opt/payara-micro.jar --deploy target/user-service.war --port 8080
+cd src/user-service && set -a && source <(grep -v '^#' .env) && set +a && mvn clean package && \
+java --add-opens java.base/jdk.internal.loader=ALL-UNNAMED \
+     --add-opens java.base/java.lang=ALL-UNNAMED \
+     --add-opens java.base/java.net=ALL-UNNAMED \
+     --add-opens java.base/java.nio=ALL-UNNAMED \
+     --add-opens java.base/java.util=ALL-UNNAMED \
+     --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
+     --add-opens java.management/sun.management=ALL-UNNAMED \
+     --add-opens java.base/sun.net.www.protocol.jrt=ALL-UNNAMED \
+     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
+     -jar /opt/payara-micro.jar --deploy target/user-service.war --port 8080
 ```
 
 #### auth-service
 ```bash
-cd src/auth-service && set -a && source <(grep -v '^#' .env) && set +a && mvn clean package && java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -jar /opt/payara-micro.jar --deploy target/auth-service.war --port 8081
+cd src/auth-service && set -a && source <(grep -v '^#' .env) && set +a && mvn clean package && \
+java --add-opens java.base/jdk.internal.loader=ALL-UNNAMED \
+     --add-opens java.base/java.lang=ALL-UNNAMED \
+     --add-opens java.base/java.net=ALL-UNNAMED \
+     --add-opens java.base/java.nio=ALL-UNNAMED \
+     --add-opens java.base/java.util=ALL-UNNAMED \
+     --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
+     --add-opens java.management/sun.management=ALL-UNNAMED \
+     --add-opens java.base/sun.net.www.protocol.jrt=ALL-UNNAMED \
+     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 \
+     -jar /opt/payara-micro.jar --deploy target/auth-service.war --port 8081
 ```
 
 #### point-service
 ```bash
-cd src/point-service && set -a && source <(grep -v '^#' .env) && set +a && mvn clean package && java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007 -jar /opt/payara-micro.jar --deploy target/point-service.war --port 8082
+cd src/point-service && set -a && source <(grep -v '^#' .env) && set +a && mvn clean package && \
+java --add-opens java.base/jdk.internal.loader=ALL-UNNAMED \
+     --add-opens java.base/java.lang=ALL-UNNAMED \
+     --add-opens java.base/java.net=ALL-UNNAMED \
+     --add-opens java.base/java.nio=ALL-UNNAMED \
+     --add-opens java.base/java.util=ALL-UNNAMED \
+     --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
+     --add-opens java.management/sun.management=ALL-UNNAMED \
+     --add-opens java.base/sun.net.www.protocol.jrt=ALL-UNNAMED \
+     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007 \
+     -jar /opt/payara-micro.jar --deploy target/point-service.war --port 8082
 ```
 
 #### bff
 ```bash
-cd src/bff && set -a && source <(grep -v '^#' .env) && set +a && mvn clean package && java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008 -jar /opt/payara-micro.jar --deploy target/bff.war --port 8090
+cd src/bff && set -a && source <(grep -v '^#' .env) && set +a && mvn clean package && \
+java --add-opens java.base/jdk.internal.loader=ALL-UNNAMED \
+     --add-opens java.base/java.lang=ALL-UNNAMED \
+     --add-opens java.base/java.net=ALL-UNNAMED \
+     --add-opens java.base/java.nio=ALL-UNNAMED \
+     --add-opens java.base/java.util=ALL-UNNAMED \
+     --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
+     --add-opens java.management/sun.management=ALL-UNNAMED \
+     --add-opens java.base/sun.net.www.protocol.jrt=ALL-UNNAMED \
+     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008 \
+     -jar /opt/payara-micro.jar --deploy target/bff.war --port 8090
 ```
 
 #### frontend
