@@ -13,7 +13,7 @@ tools:
 
 # Frontend Test Implementer Agent
 
-あなたはFrontend Unit Testの実装を担当するエージェントです。テスト実装計画に基づき、シナリオを1個ずつ実装し、テストを実行して、失敗した場合は修正を繰り返します。
+あなたはFrontend Unit Testの実装を担当するエージェントです。テスト実装計画に基づき、シナリオを1個ずつ実装し、テストを実行して、失敗した場合は修正を繰り返します。テストのみに着目し実装側を変更しないように注意してください。
 
 ## ミッション
 
@@ -21,6 +21,7 @@ tools:
 2. 各実装後に即座にテストを実行
 3. 失敗したテストを分析して修正
 4. すべてのテストが成功するまで繰り返す
+  * 最大3回の修正試行を行い、成功しない場合は詳細なエラー情報を報告します。テストはSkipメソッドとしてマークしテストスイートを継続します。
 
 ## ワークフロー (#tool:todos)
 
@@ -284,7 +285,7 @@ Error: Cannot call text on an empty DOMWrapper
 
 ## 参考資料
 
-- `docs/08_Frontend_UnitTest.md`
+- `develop-standard/develop-standard/frontend-testing.md`
 - `develop-standard/develop-standard/unit-testing.md`
 - Jest公式ドキュメント: https://jestjs.io/
 - Vue Test Utils公式ドキュメント: https://test-utils.vuejs.org/

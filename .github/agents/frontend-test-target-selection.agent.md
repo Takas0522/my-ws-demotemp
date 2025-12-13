@@ -82,5 +82,5 @@ tools:
 ## 参考資料
 
 - プロジェクト構造: `src/frontend/src/`
-- テストガイド: `docs/08_Frontend_UnitTest.md`
+- テストガイド: - `develop-standard/develop-standard/frontend-testing.md`
 - 単体テスト標準: `develop-standard/develop-standard/unit-testing.md`

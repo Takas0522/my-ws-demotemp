@@ -214,7 +214,7 @@ npm test -- --watch
 ## 参考資料
 
 - カバレッジレポート: `src/frontend/coverage/lcov-report/index.html`
-- テストガイド: `docs/08_Frontend_UnitTest.md`
+- テストガイド: - `develop-standard/develop-standard/frontend-testing.md`
 - 単体テスト標準: `develop-standard/develop-standard/unit-testing.md`
 
 ---
@@ -265,6 +265,6 @@ npm test -- --watch
 
 ## 参考資料
 
-- `docs/08_Frontend_UnitTest.md`
+- - `develop-standard/develop-standard/frontend-testing.md`
 - `develop-standard/develop-standard/unit-testing.md`
 - Jest カバレッジドキュメント: https://jestjs.io/docs/configuration#collectcoverage-boolean

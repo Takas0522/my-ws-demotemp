@@ -225,5 +225,5 @@ createRouter({ history: createWebHistory(), routes: [] })
 
 ## 参考資料
 
-- `docs/08_Frontend_UnitTest.md`
+- `develop-standard/develop-standard/frontend-testing.md`
 - `develop-standard/develop-standard/unit-testing.md`

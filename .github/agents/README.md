@@ -209,7 +209,6 @@ npm test -- --watch
 ## 参考資料
 
 ### プロジェクト内資料
-- [Frontend Unit Test ドキュメント](../../docs/08_Frontend_UnitTest.md)
 - [単体テスト工程標準](../../develop-standard/develop-standard/unit-testing.md)
 
 ### 外部資料

@@ -76,6 +76,6 @@ tools:
 
 ## 参考資料
 
-- プロジェクトテストガイド: `docs/08_Frontend_UnitTest.md`
+- プロジェクトテストガイド: - `develop-standard/develop-standard/frontend-testing.md`
 - 単体テスト工程標準: `develop-standard/develop-standard/unit-testing.md`
 - Vue + Jest ベストプラクティス
