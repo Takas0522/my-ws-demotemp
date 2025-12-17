@@ -4,6 +4,8 @@
 
 * テストコードの生成をAgentモードを利用して生成できる
 * Unit/Integration/e2eのそれぞれのテストの生成を実施できる
+* Custom Agentの利用
+* (Opt)IssueへのCopilotの割り当て作業の実施
 
 > [!NOTE]
 > 途中から参加する場合は `challenge3` ブランチから実施できます。
@@ -41,7 +43,6 @@ GitHub Copilotを使用して現在のアプリケーション構造などから
 - auth-service
 - point-service
 - bff
-- frontend
 
 テストは下記の条件で実施してください
 - テスト生成後はテストを実行し、テストがクリアするまで修正を行ってください。
