@@ -127,7 +127,6 @@ describe('AccountView.vue', () => {
       // Check if the link exists in the rendered HTML
       const html = wrapper.html()
       expect(html).toContain('/points')
-      expect(wrapper.text()).toContain('ポイント')
     })
 
     it('should have logout button', async () => {

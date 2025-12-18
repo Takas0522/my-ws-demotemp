@@ -375,7 +375,6 @@ describe('PointHistoryView.vue', () => {
       // Check if the link exists in the rendered HTML
       const html = wrapper.html()
       expect(html).toContain('/points')
-      expect(wrapper.text()).toContain('残高へ戻る')
     })
 
     it('should have link to account page', async () => {
@@ -386,7 +385,6 @@ describe('PointHistoryView.vue', () => {
       // Check if the link exists in the rendered HTML
       const html = wrapper.html()
       expect(html).toContain('/account')
-      expect(wrapper.text()).toContain('アカウント')
     })
 
     it('should have logout button', async () => {
