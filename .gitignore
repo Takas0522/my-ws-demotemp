@@ -61,3 +61,5 @@ temp/
 /**/.env
 /**/.env.e2e
 /**/.e2e-pid
+# Test coverage reports
+test-reports/**/coverage/
